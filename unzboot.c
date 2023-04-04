@@ -130,7 +130,8 @@ static ssize_t gunzip(void *dst, size_t dstlen, uint8_t *src, size_t srclen)
 {
     z_stream s;
     ssize_t dstbytes;
-    int r, i, flags;
+    int r, flags;
+    size_t i;
 
     /* skip header */
     i = 10;
