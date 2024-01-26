@@ -48,6 +48,7 @@
 
 #include <glib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdint.h>
 #include <zlib.h>
  
@@ -253,14 +254,13 @@ static ssize_t unpack_efi_zboot_image(uint8_t **buffer, int *size)
 }
 
 int main(int argc, char *argv[]) {
-    uint64_t kernel_size = 0;
     uint8_t *buffer;
     gsize len;
     int size;
 
     if (argc != 3) {
         fprintf(stderr, "Uso: %s <input file> <output file>\n", argv[0]);
-        return 1;
+        exit(EXIT_FAILURE);
     }
 
     const char* input_file = argv[1];
@@ -268,14 +268,14 @@ int main(int argc, char *argv[]) {
 
     /* Load as raw file otherwise */
     if (!g_file_get_contents(input_file, (char **)&buffer, &len, NULL)) {
-        return -1;
+        exit(EXIT_FAILURE);
     }
     size = len;
 
     /* Unpack the image if it is a EFI zboot image */
     if (unpack_efi_zboot_image(&buffer, &size) < 0) {
         g_free(buffer);
-        return -1;
+        exit(EXIT_FAILURE);
     }
 
     /* check the arm64 magic header value -- very old kernels may not have it */
@@ -284,10 +284,10 @@ int main(int argc, char *argv[]) {
 
         if (!g_file_set_contents(output_file, (char *)buffer, size, NULL)) {
              g_free(buffer);
-             return -1;
+	     exit(EXIT_FAILURE);
         }
     }
 
     g_free(buffer);
-    return kernel_size;
+    exit(EXIT_SUCCESS);
 }
