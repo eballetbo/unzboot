@@ -268,8 +268,7 @@ int main(int argc, char *argv[]) {
 
     /* Load as raw file otherwise */
     if (!g_file_get_contents(input_file, (char **)&buffer, &len, NULL)) {
-        fprintf(stderr, "%s: %s: cannot load input file\n",
-	        argv[0], input_file);
+        fprintf(stderr, "%s: %s: cannot load input file\n", argv[0], input_file);
         exit(EXIT_FAILURE);
     }
     size = len;
@@ -286,15 +285,13 @@ int main(int argc, char *argv[]) {
         memcmp(buffer + ARM64_MAGIC_OFFSET, "ARM\x64", 4) == 0) {
 
         if (!g_file_set_contents(output_file, (char *)buffer, size, NULL)) {
-             g_free(buffer);
-	     fprintf(stderr, "%s: cannot write to output file\n", argv[0]);
-	     exit(EXIT_FAILURE);
+            g_free(buffer);
+            fprintf(stderr, "%s: cannot write to output file\n", argv[0]);
+            exit(EXIT_FAILURE);
         }
-    }
-    else {
-        fprintf(stderr, "%s: %s: cannot find ARM64 compressed image\n",
-		argv[0], input_file);
-	exit(EXIT_FAILURE);
+    } else {
+        fprintf(stderr, "%s: %s: cannot find ARM64 compressed image\n", argv[0], input_file);
+        exit(EXIT_FAILURE);
     }
 
     g_free(buffer);
