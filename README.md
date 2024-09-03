@@ -39,8 +39,8 @@ To build the program, follow these steps:
 
 1. Clone the repository and navigate to the project directory:
     ```bash
-    git clone https://github.com/yourusername/efi-kernel-extractor.git
-    cd efi-kernel-extractor
+    git clone https://github.com/eballetbo/unzboot
+    cd unzboot
     ```
 
 2. Configure the build directory using Meson:
@@ -59,7 +59,7 @@ The compiled binary will be available in the `build` directory.
 
 Once compiled, the program can be run from the command line with the following syntax:
 ```bash
-./build/efi-kernel-extractor <input_file> <output_file>
+./build/unzboot <input_file> <output_file>
 ```
 
 - **`input_file`**: The path to the EFI application containing the compressed kernel image.
@@ -68,7 +68,7 @@ Once compiled, the program can be run from the command line with the following s
 ### Example
 
 ```bash
-./build/efi-kernel-extractor efi_image.efi vmlinuz
+./build/unzboot efi_image.efi vmlinuz
 ```
 
 This will extract the kernel image from `efi_image.efi` and save it as `vmlinuz` if it is a valid ARM64 compressed image.
