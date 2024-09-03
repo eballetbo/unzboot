@@ -211,6 +211,7 @@ static ssize_t unpack_efi_zboot_image(uint8_t **buffer, int *size)
 
     /* ignore if this is too small to be a EFI zboot image */
     if (*size < sizeof(*header)) {
+        fprintf(stderr, "The input file is too small to be a EFI zboot image\n");
         return 0;
     }
 
@@ -220,6 +221,7 @@ static ssize_t unpack_efi_zboot_image(uint8_t **buffer, int *size)
     if (memcmp(&header->msdos_magic, EFI_PE_MSDOS_MAGIC, 2) != 0 ||
         memcmp(&header->zimg, "zimg", 4) != 0 ||
         memcmp(&header->linux_magic, EFI_PE_LINUX_MAGIC, 4) != 0) {
+        fprintf(stderr, "The input file is not a Linux EFI zboot image\n");
         return 0;
     }
 
@@ -282,15 +284,23 @@ int main(int argc, char *argv[]) {
 
     /* check the arm64 magic header value -- very old kernels may not have it */
     if (size > ARM64_MAGIC_OFFSET + 4 &&
-        memcmp(buffer + ARM64_MAGIC_OFFSET, "ARM\x64", 4) == 0) {
-
+        (memcmp(buffer + ARM64_MAGIC_OFFSET, "ARM\x64", 4) == 0)) {
+        fprintf(stdout, "%s: found ARM64 header\n", argv[0]);
+        if (!g_file_set_contents(output_file, (char *)buffer, size, NULL)) {
+            g_free(buffer);
+            fprintf(stderr, "%s: cannot write to output file\n", argv[0]);
+            exit(EXIT_FAILURE);
+        }
+    } else if (size > ARM64_MAGIC_OFFSET + 4 &&
+        (memcmp(buffer + ARM64_MAGIC_OFFSET, "RSC\x05", 4) == 0)) {
+        fprintf(stdout, "%s: found RISC-V header\n", argv[0]);
         if (!g_file_set_contents(output_file, (char *)buffer, size, NULL)) {
             g_free(buffer);
             fprintf(stderr, "%s: cannot write to output file\n", argv[0]);
             exit(EXIT_FAILURE);
         }
     } else {
-        fprintf(stderr, "%s: %s: cannot find ARM64 compressed image\n", argv[0], input_file);
+        fprintf(stderr, "%s: %s: cannot find ARM64/RISC-V compressed image\n", argv[0], input_file);
         exit(EXIT_FAILURE);
     }
 
