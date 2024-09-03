@@ -261,7 +261,7 @@ int main(int argc, char *argv[]) {
     int size;
 
     if (argc != 3) {
-        fprintf(stderr, "Uso: %s <input file> <output file>\n", argv[0]);
+        fprintf(stderr, "Usage: %s <input file> <output file>\n", argv[0]);
         exit(EXIT_FAILURE);
     }
 
