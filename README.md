@@ -33,6 +33,13 @@ You can install the necessary dependencies on Ubuntu using:
 sudo apt-get install build-essential meson ninja-build libglib2.0-dev zlib1g-dev
 ```
 
+#### Installing Dependencies on Alpine
+
+You can install the necessary dependencies on Alpine using:
+```
+sudo apk add meson gcc glib-dev musl-dev
+```
+
 ### Building the Utility
 
 To build the program, follow these steps:
