@@ -4,9 +4,10 @@ project('unzboot', 'c',
 
 glibdep = dependency('glib-2.0')
 zdep = dependency('zlib')
+zstddep = dependency('libzstd')
 
 exe = executable('unzboot', 'unzboot.c',
-  dependencies: [glibdep, zdep],
+  dependencies: [glibdep, zdep, zstddep],
   install : true)
 
 test('basic', exe)
