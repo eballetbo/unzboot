@@ -51,6 +51,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <zlib.h>
+#include <zstd.h>
  
 #define ARM64_MAGIC_OFFSET  56
 
@@ -225,14 +226,6 @@ static ssize_t unpack_efi_zboot_image(uint8_t **buffer, int *size)
         return 0;
     }
 
-    if (strcmp(header->compression_type, "gzip") != 0) {
-        fprintf(stderr,
-                "unable to handle EFI zboot image with \"%.*s\" compression\n",
-                (int)sizeof(header->compression_type) - 1,
-                header->compression_type);
-        return -1;
-    }
-
     ploff = ldl_le_p(&header->payload_offset);
     plsize = ldl_le_p(&header->payload_size);
 
@@ -242,11 +235,30 @@ static ssize_t unpack_efi_zboot_image(uint8_t **buffer, int *size)
     }
 
     data = g_malloc(LOAD_IMAGE_MAX_GUNZIP_BYTES);
-    bytes = gunzip(data, LOAD_IMAGE_MAX_GUNZIP_BYTES, *buffer + ploff, plsize);
-    if (bytes < 0) {
-        fprintf(stderr, "failed to decompress EFI zboot image\n");
+
+    if (!strcmp(header->compression_type, "gzip")) {
+        bytes = gunzip(data, LOAD_IMAGE_MAX_GUNZIP_BYTES, *buffer + ploff, plsize);
+        if (bytes < 0) {
+            fprintf(stderr, "failed to decompress EFI zboot image with GZIP payload.\n");
+            g_free(data);
+            return -1;
+        }
+    } else if (!strcmp(header->compression_type, "zstd22") ||
+               !strcmp(header->compression_type, "zstd")) {
+      bytes = ZSTD_decompress(data, LOAD_IMAGE_MAX_GUNZIP_BYTES,
+                              *buffer + ploff, plsize);
+      if (bytes < 0) {
+        fprintf(stderr,
+                "failed to decompress EFI zboot image with ZSTD payload.\n");
         g_free(data);
         return -1;
+      }
+    } else {
+      fprintf(stderr,
+              "unable to handle EFI zboot image with \"%.*s\" compression\n",
+              (int)sizeof(header->compression_type) - 1,
+              header->compression_type);
+      return -1;
     }
 
     g_free(*buffer);
