@@ -203,7 +203,7 @@ toosmall:
  *
  * If the image is not a Linux EFI zboot image, do nothing and return success.
  */
-static ssize_t unpack_efi_zboot_image(uint8_t **buffer, int *size)
+static ssize_t unpack_efi_zboot_image(uint8_t **buffer, size_t *size)
 {
     const struct linux_efi_zboot_header *header;
     uint8_t *data = NULL;
@@ -229,7 +229,7 @@ static ssize_t unpack_efi_zboot_image(uint8_t **buffer, int *size)
     ploff = ldl_le_p(&header->payload_offset);
     plsize = ldl_le_p(&header->payload_size);
 
-    if (ploff < 0 || plsize < 0 || ploff + plsize > *size) {
+    if (ploff < 0 || plsize < 0 || (size_t)ploff + (size_t)plsize > *size) {
         fprintf(stderr, "unable to handle corrupt EFI zboot image\n");
         return -1;
     }
@@ -270,7 +270,7 @@ static ssize_t unpack_efi_zboot_image(uint8_t **buffer, int *size)
 int main(int argc, char *argv[]) {
     uint8_t *buffer;
     gsize len;
-    int size;
+    size_t size;
 
     if (argc != 3) {
         fprintf(stderr, "Usage: %s <input file> <output file>\n", argv[0]);
