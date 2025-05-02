@@ -99,14 +99,14 @@ struct linux_efi_zboot_header {
     uint32_t    pe_header_offset;       /* LE offset to the PE header */
 };
 
-static inline int ldl_he_p(const void *ptr)
+static int ldl_he_p(const void *ptr)
 {
     int32_t r;
     memcpy(&r, ptr, sizeof(r));
     return r;
 }
 
-static inline int ldl_le_p(const void *ptr)
+static int ldl_le_p(const void *ptr)
 {
     return le_bswap(ldl_he_p(ptr), 32);
 }
