@@ -18,26 +18,27 @@ This project provides a C utility to extract and decompress a Linux kernel image
 - **Libraries**: This utility relies on the following libraries:
   - `glib-2.0`
   - `zlib`
+  - `libzstd`
 
 #### Installing Dependencies on Fedora
 
 You can install the necessary dependencies on Fedora using:
 ```bash
-sudo dnf install gcc meson ninja-build glib2-devel zlib-devel
+sudo dnf install gcc meson ninja-build glib2-devel zlib-devel libzstd-devel
 ```
 
 #### Installing Dependencies on Ubuntu
 
 You can install the necessary dependencies on Ubuntu using:
 ```bash
-sudo apt-get install build-essential meson ninja-build libglib2.0-dev zlib1g-dev
+sudo apt-get install build-essential meson ninja-build libglib2.0-dev zlib1g-dev libzstd-dev
 ```
 
 #### Installing Dependencies on Alpine
 
 You can install the necessary dependencies on Alpine using:
 ```
-sudo apk add meson gcc glib-dev musl-dev
+sudo apk add meson gcc glib-dev musl-dev zstd-libs
 ```
 
 ### Building the Utility
