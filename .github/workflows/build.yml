@@ -1,0 +1,40 @@
+name: Test Build
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # Allows manual triggering of the workflow
+
+# This workflow builds the project using Meson and Ninja on Ubuntu
+# It checks out the code, installs dependencies, configures the build, and runs tests
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Checkout the code
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Set up dependencies
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y meson ninja-build gcc libglib2.0-dev zlib1g-dev libzstd-dev
+
+    # Configure the build
+    - name: Configure build
+      run: |
+        meson setup builddir
+
+    # Build the project
+    - name: Build project
+      run: |
+        meson compile -C builddir
+
+    # Optionally, run tests (if applicable)
+    - name: Run tests
+      run: |
+        meson test -C builddir
