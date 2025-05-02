@@ -258,6 +258,7 @@ static ssize_t unpack_efi_zboot_image(uint8_t **buffer, size_t *size)
               "unable to handle EFI zboot image with \"%.*s\" compression\n",
               (int)sizeof(header->compression_type) - 1,
               header->compression_type);
+      g_free(data);
       return -1;
     }
 
