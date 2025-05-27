@@ -1,3 +1,10 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
+/*
+ * Copyright (c) 2025 Enric Balletbo i Serra
+ *
+ * Test suite for the unzboot utility, which is used to unpack EFI images.
+ */
+
 #include <glib.h>
 #include <stdint.h>
 #include <string.h>
