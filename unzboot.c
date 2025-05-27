@@ -290,6 +290,22 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
+    /* If the output file is "-", write to stdout */
+    if (strcmp(output_file, "-") == 0) {
+        if (fwrite(buffer, 1, size, stdout) != size) {
+            g_free(buffer);
+            fprintf(stderr, "%s: cannot write to stdout\n", argv[0]);
+            exit(EXIT_FAILURE);
+        }
+    /* Otherwise, write to the specified output file */
+    } else {
+        if (!g_file_set_contents(output_file, (char *)buffer, size, NULL)) {
+            g_free(buffer);
+            fprintf(stderr, "%s: cannot write to output file\n", argv[0]);
+            exit(EXIT_FAILURE);
+        }
+    }
+
     g_free(buffer);
     exit(EXIT_SUCCESS);
 }
