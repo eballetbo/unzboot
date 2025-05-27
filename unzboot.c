@@ -275,21 +275,18 @@ int main(int argc, char *argv[]) {
     if (size > ARM64_MAGIC_OFFSET + 4 &&
         (memcmp(buffer + ARM64_MAGIC_OFFSET, "ARM\x64", 4) == 0)) {
         fprintf(stdout, "%s: found ARM64 header\n", argv[0]);
-        if (!g_file_set_contents(output_file, (char *)buffer, size, NULL)) {
-            g_free(buffer);
-            fprintf(stderr, "%s: cannot write to output file\n", argv[0]);
-            exit(EXIT_FAILURE);
-        }
     } else if (size > ARM64_MAGIC_OFFSET + 4 &&
         (memcmp(buffer + ARM64_MAGIC_OFFSET, "RSC\x05", 4) == 0)) {
         fprintf(stdout, "%s: found RISC-V header\n", argv[0]);
-        if (!g_file_set_contents(output_file, (char *)buffer, size, NULL)) {
-            g_free(buffer);
-            fprintf(stderr, "%s: cannot write to output file\n", argv[0]);
-            exit(EXIT_FAILURE);
-        }
     } else {
         fprintf(stderr, "%s: %s: cannot find ARM64/RISC-V compressed image\n", argv[0], input_file);
+        exit(EXIT_FAILURE);
+    }
+
+    /* Write the decompressed image to the output file */
+    if (!g_file_set_contents(output_file, (char *)buffer, size, NULL)) {
+        g_free(buffer);
+        fprintf(stderr, "%s: cannot write to output file\n", argv[0]);
         exit(EXIT_FAILURE);
     }
 
