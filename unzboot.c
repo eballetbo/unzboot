@@ -208,7 +208,15 @@ static ssize_t unpack_efi_zboot_image(uint8_t **buffer, size_t *size)
     ploff = ldl_le_p(&header->payload_offset);
     plsize = ldl_le_p(&header->payload_size);
 
-    if (ploff < 0 || plsize < 0 || (size_t)ploff + (size_t)plsize > *size) {
+    /*
+     * Validate payload offset and size:
+     * - Must not be negative.
+     * - payload_offset must be within the current buffer bounds.
+     * - payload_size must not cause payload_offset + payload_size to exceed current buffer bounds,
+     *   checking for overflow during addition.
+     */
+    if (ploff < 0 || plsize < 0 ||
+        (size_t)ploff > *size || (size_t)plsize > *size - (size_t)ploff) {
         fprintf(stderr, "unable to handle corrupt EFI zboot image\n");
         return -1;
     }
