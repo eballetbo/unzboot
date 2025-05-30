@@ -226,9 +226,10 @@ static ssize_t unpack_efi_zboot_image(uint8_t **buffer, size_t *size)
                !strcmp(header->compression_type, "zstd")) {
       bytes = ZSTD_decompress(data, LOAD_IMAGE_MAX_GUNZIP_BYTES,
                               *buffer + ploff, plsize);
-      if (bytes < 0) {
+      if (ZSTD_isError(bytes)) {
         fprintf(stderr,
-                "failed to decompress EFI zboot image with ZSTD payload.\n");
+                "failed to decompress EFI zboot image with ZSTD payload: %s\n",
+                ZSTD_getErrorName(bytes));
         g_free(data);
         return -1;
       }
