@@ -88,6 +88,7 @@ static int ldl_le_p(const void *ptr)
 
 static void *zalloc(void *x, unsigned items, unsigned size)
 {
+    (void)x; /* This parameter is required by zlib but not used here */
     void *p;
 
     size *= items;
@@ -100,6 +101,7 @@ static void *zalloc(void *x, unsigned items, unsigned size)
 
 static void zfree(void *x, void *addr)
 {
+    (void)x; /* This parameter is required by zlib but not used here */
     g_free(addr);
 }
 
