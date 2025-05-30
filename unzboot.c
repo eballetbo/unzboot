@@ -222,6 +222,10 @@ static ssize_t unpack_efi_zboot_image(uint8_t **buffer, size_t *size)
     }
 
     data = g_malloc(LOAD_IMAGE_MAX_GUNZIP_BYTES);
+    if (!data) {
+        fprintf(stderr, "failed to allocate memory for decompression\n");
+        return -1;
+    }
 
     if (!strcmp(header->compression_type, "gzip")) {
         bytes = gunzip(data, LOAD_IMAGE_MAX_GUNZIP_BYTES, *buffer + ploff, plsize);
