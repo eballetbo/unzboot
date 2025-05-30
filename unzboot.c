@@ -150,7 +150,7 @@ static ssize_t gunzip(void *dst, size_t dstlen, uint8_t *src, size_t srclen)
 
     r = inflateInit2(&s, -MAX_WBITS);
     if (r != Z_OK) {
-        printf ("Error: inflateInit2() returned %d\n", r);
+        fprintf(stderr, "Error: inflateInit2() returned %d\n", r);
         inflateEnd(&s); /* Clean up stream state */
         return (-1);
     }
@@ -160,7 +160,7 @@ static ssize_t gunzip(void *dst, size_t dstlen, uint8_t *src, size_t srclen)
     s.avail_out = dstlen;
     r = inflate(&s, Z_FINISH);
     if (r != Z_OK && r != Z_STREAM_END) {
-        printf ("Error: inflate() returned %d\n", r);
+        fprintf(stderr, "Error: inflate() returned %d\n", r);
         inflateEnd(&s);
         return -1;
     }
@@ -170,7 +170,7 @@ static ssize_t gunzip(void *dst, size_t dstlen, uint8_t *src, size_t srclen)
     return dstbytes;
 
 toosmall:
-    puts("Error: gunzip out of data in header\n");
+    fprintf(stderr, "Error: input too small\n");
     return -1;
 }
 
