@@ -149,6 +149,7 @@ static ssize_t gunzip(void *dst, size_t dstlen, uint8_t *src, size_t srclen)
     r = inflateInit2(&s, -MAX_WBITS);
     if (r != Z_OK) {
         printf ("Error: inflateInit2() returned %d\n", r);
+        inflateEnd(&s); /* Clean up stream state */
         return (-1);
     }
     s.next_in = src + i;
